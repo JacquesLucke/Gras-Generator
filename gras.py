@@ -18,6 +18,14 @@ def createMesh(name, origin, verts, edges, faces):
     return ob
  
 def run(origin):
+    verts, faces = generate_polystrip()
+    
+    ob1 = createMesh('Solid', origin, verts, [], faces)
+    
+    return
+
+# generates 2 tupels, one with the verts and one with the indices for faces
+def generate_polystrip():
     verts = []
     faces = []
     
@@ -30,10 +38,8 @@ def run(origin):
         
         faces.append((2*i - 2, 2*i - 1, 2*i + 1, 2*i))
         print(faces[i - 1])
-    
-    ob1 = createMesh('Solid', origin, verts, [], faces)
-    
-    return
+        
+    return (verts, faces)
  
 if __name__ == "__main__":
     run((0,0,0))
