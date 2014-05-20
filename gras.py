@@ -18,8 +18,19 @@ def createMesh(name, origin, verts, edges, faces):
     return ob
  
 def run(origin):
-    verts = ((0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0),  (0, 2, 0), (1, 2, 0))
-    faces = ((0, 1, 2, 3), (3, 2, 5, 4))
+    verts = []
+    faces = []
+    
+    verts.append((0.5, 0, 0))
+    verts.append((-0.5, 0, 0))
+    
+    for i in range(1, 5):
+        verts.append((0.5, 0, i))
+        verts.append((-0.5, 0, i))
+        
+        faces.append((2*i - 2, 2*i - 1, 2*i + 1, 2*i))
+        print(faces[i - 1])
+    
     ob1 = createMesh('Solid', origin, verts, [], faces)
     
     return
