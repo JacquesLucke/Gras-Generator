@@ -25,7 +25,7 @@ def run(origin):
     return
 
 # generates 2 tupels, one with the verts and one with the indices for faces
-def generate_polystrip(steps = 5, width = 0.7, height = 3):
+def generate_polystrip(steps = 2, width = 0.7, height = 3, topScale = 0.3):
     verts = []
     faces = []
     
@@ -36,13 +36,17 @@ def generate_polystrip(steps = 5, width = 0.7, height = 3):
     verts.append((-halfWidth, 0, 0))
     
     for i in range(1, steps + 1):
-        verts.append((halfWidth, 0, i * heightPerStep))
-        verts.append((-halfWidth, 0, i * heightPerStep))
+        hWidth = linear_weight(halfWidth * topScale, halfWidth, i / steps)
+        print(hWidth)
+        verts.append((hWidth, 0, i * heightPerStep))
+        verts.append((-hWidth, 0, i * heightPerStep))
         
         faces.append((2*i - 2, 2*i - 1, 2*i + 1, 2*i))
-        print(faces[i - 1])
         
     return (verts, faces)
+
+def linear_weight(val1, val2, weight):
+    return val1 * weight + val2 * (1 - weight)
  
 if __name__ == "__main__":
     run((0,0,0))
