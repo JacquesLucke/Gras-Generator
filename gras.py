@@ -25,16 +25,19 @@ def run(origin):
     return
 
 # generates 2 tupels, one with the verts and one with the indices for faces
-def generate_polystrip():
+def generate_polystrip(steps = 5, width = 0.7, height = 3):
     verts = []
     faces = []
     
-    verts.append((0.5, 0, 0))
-    verts.append((-0.5, 0, 0))
+    heightPerStep = height / steps
+    halfWidth = width / 2
     
-    for i in range(1, 5):
-        verts.append((0.5, 0, i))
-        verts.append((-0.5, 0, i))
+    verts.append((halfWidth, 0, 0))
+    verts.append((-halfWidth, 0, 0))
+    
+    for i in range(1, steps + 1):
+        verts.append((halfWidth, 0, i * heightPerStep))
+        verts.append((-halfWidth, 0, i * heightPerStep))
         
         faces.append((2*i - 2, 2*i - 1, 2*i + 1, 2*i))
         print(faces[i - 1])
