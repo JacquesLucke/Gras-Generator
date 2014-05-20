@@ -1,5 +1,8 @@
 import bpy
-import bmesh
+import random
+import math
+
+random.seed(); 
  
 def createMesh(name, origin, verts, edges, faces):
     # Create mesh and object
@@ -25,7 +28,7 @@ def run(origin):
     return
 
 # generates 2 tupels, one with the verts and one with the indices for faces
-def generate_polystrip(steps = 10, width = 0.7, height = 3, topScale = 0.3):
+def generate_polystrip(steps = 10, width = 0.4, height = 3, topScale = 0.2):
     verts = []
     faces = []
     
@@ -46,6 +49,16 @@ def generate_polystrip(steps = 10, width = 0.7, height = 3, topScale = 0.3):
 
 def linear_interpolation(val1, val2, weight):
     return val1 * weight + val2 * (1 - weight)
+
+def gradient_interpolation(gradient, value):
+    index = (len(gradient) - 1) * value
+    if round(index) == index:
+        return gradient[int(index)]
+    indexDown = math.trunc(index)
+    indexUp = math.ceil(index)
+    val = linear_interpolation(gradient[indexDown], gradient[indexUp], (value - 1 / len(gradient) * indexDown) * len(gradient))
+    print(val)
+    return val
     
     
     
