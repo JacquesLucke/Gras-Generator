@@ -1,4 +1,5 @@
 import bpy
+import bmesh
  
 def createMesh(name, origin, verts, edges, faces):
     # Create mesh and object
@@ -20,12 +21,11 @@ def createMesh(name, origin, verts, edges, faces):
 def run(origin):
     verts, faces = generate_polystrip()
     
-    ob1 = createMesh('Solid', origin, verts, [], faces)
-    
+    ob = createMesh('Solid', origin, verts, [], faces)    
     return
 
 # generates 2 tupels, one with the verts and one with the indices for faces
-def generate_polystrip(steps = 2, width = 0.7, height = 3, topScale = 0.3):
+def generate_polystrip(steps = 10, width = 0.7, height = 3, topScale = 0.3):
     verts = []
     faces = []
     
@@ -36,17 +36,40 @@ def generate_polystrip(steps = 2, width = 0.7, height = 3, topScale = 0.3):
     verts.append((-halfWidth, 0, 0))
     
     for i in range(1, steps + 1):
-        hWidth = linear_weight(halfWidth * topScale, halfWidth, i / steps)
-        print(hWidth)
+        hWidth = linear_interpolation(halfWidth * topScale, halfWidth, i / steps)
+        
         verts.append((hWidth, 0, i * heightPerStep))
         verts.append((-hWidth, 0, i * heightPerStep))
-        
         faces.append((2*i - 2, 2*i - 1, 2*i + 1, 2*i))
         
     return (verts, faces)
 
-def linear_weight(val1, val2, weight):
+def linear_interpolation(val1, val2, weight):
     return val1 * weight + val2 * (1 - weight)
+    
+    
+    
+# Interface ----------------------------------------------   
+class ToolsPanel(bpy.types.Panel):
+    bl_label = "Make Gras"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "TOOLS"
  
-if __name__ == "__main__":
-    run((0,0,0))
+    def draw(self, context):
+        layout = self.layout
+        
+        row = layout.row(align=True)
+        row.operator("makegras.button")
+        
+class OBJECT_OT_Button(bpy.types.Operator):
+    bl_idname = "makegras.button"
+    bl_label = "Make Gras"
+    number = bpy.props.IntProperty()
+    row = bpy.props.IntProperty()
+    loc = bpy.props.StringProperty()
+ 
+    def execute(self, context):
+        run((0,0,0))
+        return{'FINISHED'} 
+
+bpy.utils.register_module(__name__)
