@@ -22,35 +22,44 @@ def createMesh(name, origin, verts, edges, faces):
     return ob
  
 def run(origin):
-    for i in range(1, 4000):
-        newOrigin = add_vectors(origin, [random.uniform(-100, 100), random.uniform(-100, 100), 0])
+    for i in range(1, 2):
+        newOrigin = add_vectors(origin, [random.uniform(-2, 2), random.uniform(-2, 2), 0])
         verts, edges = generate_polystrip()
         ob = createMesh('g', newOrigin, verts, edges, [])    
         ob.show_name = False
     return
 
-# generates 2 tupels, one with the verts and one with the indices for faces
-def generate_polystrip(steps = 10, height = 3):
-    verts = []
+# generates 2 tupels, one with the verts and one with the indices for edges
+def generate_polystrip(steps = 5, height = 0.2):
+    verts = generate_points(steps = 7, height = 1)
     edges = []
+    
+    for i in range(1, len(verts)):
+        edges.append((i - 1, i))     
+        
+    return (verts, edges)
+
+# generate point list
+def generate_points(steps = 4, height = 1):
+    verts = []
     
     lastPosition = [0, 0, 0]
     verts.append(lastPosition)
     
-    changeVector = [random.uniform(-0.2, 0.2), random.uniform(-0.2,0.2), 1]
+    size = height / steps
+    changeVector = [random.uniform(-size / 4, size / 4), random.uniform(-size / 4, size / 4), size]
     
-    for i in range(1, steps):
-        progress = i / steps
-        changeAmount = linear_interpolation(1.5, 0, progress)
+    for i in range(1, steps):   
+        changeAmount = linear_interpolation(size * 2, size / 10, i / steps)
         directionChangeVector = [random.uniform(-changeAmount, changeAmount), random.uniform(-changeAmount, changeAmount), random.uniform(-changeAmount / 1.5, changeAmount * 1.3)]
         changeVector = add_vectors(changeVector, directionChangeVector)
+        multiply_vector(changeVector, 0.9)
         newPosition = add_vectors(lastPosition, changeVector)
         verts.append(newPosition)
-        edges.append((i - 1, i))    
         
         lastPosition = newPosition
         
-    return (verts, edges)
+    return verts
 
 def normalize_vector(v):
     lenght = math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2])
