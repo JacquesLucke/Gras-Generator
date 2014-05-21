@@ -32,20 +32,45 @@ def generate_polystrip(steps = 10, width = 0.4, height = 3, topScale = 0.2):
     verts = []
     faces = []
     
-    heightPerStep = height / steps
     halfWidth = width / 2
     
-    verts.append((halfWidth, 0, 0))
-    verts.append((-halfWidth, 0, 0))
+    direction = [0, 0, 1]
+    growSpeed = height / steps
+    
+    
+    verts.append([halfWidth, 0, 0])
+    verts.append([-halfWidth, 0, 0])
     
     for i in range(1, steps + 1):
         hWidth = linear_interpolation(halfWidth * topScale, halfWidth, i / steps)
         
-        verts.append((hWidth, 0, i * heightPerStep))
-        verts.append((-hWidth, 0, i * heightPerStep))
+        vert1 = [hWidth, 0, i * growSpeed]
+        vert2 = [-hWidth, 0, i * growSpeed]
+        verts.append(vert1)
+        verts.append(vert2)
+        
         faces.append((2*i - 2, 2*i - 1, 2*i + 1, 2*i))
         
     return (verts, faces)
+
+def normalize_vector(v):
+    lenght = math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2])
+    v[0] /= lenght
+    v[1] /= lenght
+    v[2] /= lenght
+    return v
+
+def multiply_vector(v, value):
+    v[0] *= value
+    v[1] *= value
+    v[2] *= value
+    return v
+
+def add_vectors(v1, v2):
+    v1[0] += v2[0]
+    v1[1] += v2[1]
+    v1[2] += v2[2]
+    return v1
 
 def linear_interpolation(val1, val2, weight):
     return val1 * weight + val2 * (1 - weight)
