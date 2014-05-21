@@ -3,6 +3,23 @@ import random
 import math
 
 random.seed(); 
+
+def run(origin):
+    if not "grashalms" in bpy.data.groups:
+        bpy.ops.group.create(name = "grashalms")
+    grashalmNames = []
+    for i in range(0, 100):
+        verts, faces = generate_polystrip(7, 1)
+        ob = createMesh('grashalm', origin, verts, [], faces)    
+        ob.show_name = False
+        grashalmNames.append(ob.name)
+        
+    scene = bpy.context.scene
+    for name in grashalmNames:   
+        scene.objects.active = scene.objects[name] 
+        bpy.ops.object.group_link(group="grashalms")     
+        print(name)
+    return
  
 def createMesh(name, origin, verts, edges, faces):
     # Create mesh and object
@@ -20,24 +37,29 @@ def createMesh(name, origin, verts, edges, faces):
     # Update mesh with new data
     me.update(calc_edges=True)
     return ob
- 
-def run(origin):
-    for i in range(1, 2):
-        newOrigin = add_vectors(origin, [random.uniform(-2, 2), random.uniform(-2, 2), 0])
-        verts, edges = generate_polystrip()
-        ob = createMesh('g', newOrigin, verts, edges, [])    
-        ob.show_name = False
-    return
 
 # generates 2 tupels, one with the verts and one with the indices for edges
-def generate_polystrip(steps = 5, height = 0.2):
-    verts = generate_points(steps = 7, height = 1)
-    edges = []
+def generate_polystrip(steps = 7, height = 1):
+    verts = generate_points(steps, height)
+    faces = []
     
-    for i in range(1, len(verts)):
-        edges.append((i - 1, i))     
+    
+    direction = [random.uniform(-1, 1), random.uniform(-1, 1), random.uniform(-1, 1) / 2]
+    set_length(direction, height / 30)
+    
+    point = add_vectors(verts[0], direction)
+    verts.append(point) 
+    
+    for i in range(1, steps):
+        direction = [random.uniform(-1, 1), random.uniform(-1, 1), random.uniform(-1, 1) / 2]
+        set_length(direction, height / 30)
+        direction[0] = abs(direction[0])
+        point = add_vectors(verts[i], direction)
+        verts.append(point)  
         
-    return (verts, edges)
+        faces.append((i -1, i, steps + i, steps + i - 1)) 
+        
+    return (verts, faces)
 
 # generate point list
 def generate_points(steps = 4, height = 1):
