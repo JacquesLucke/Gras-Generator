@@ -9,7 +9,7 @@ def run(origin):
     if not "grashalms" in bpy.data.groups:
         bpy.ops.group.create(name = "grashalms")
     grashalmNames = []
-    for i in range(0, 100):
+    for i in range(0, 50):
         verts, faces = generate_polystrip(7, 1)
         ob = createMesh('grashalm', origin, verts, [], faces)    
         ob.show_name = False
@@ -20,10 +20,17 @@ def run(origin):
     bpy.ops.object.empty_add(type = 'PLAIN_AXES', view_align = False, location = origin, layers = (True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False))
     empty = scene.objects.active
     empty.name = "grashalm.parent"
+    
+    if not "grashalm" in bpy.data.materials:
+        material = bpy.data.materials.new("grashalm")
+        material.diffuse_color = (0.0168597, 0.8, 0.00637871)
+    material = bpy.data.materials["grashalm"]
+
     for name in grashalmNames:   
         scene.objects.active = scene.objects[name] 
         bpy.ops.object.group_link(group="grashalms")   
         scene.objects.active.select = True
+        scene.objects.active.data.materials.append(material)
        
     scene.objects.active = empty
     bpy.ops.object.parent_set(type='OBJECT', keep_transform=True) 
