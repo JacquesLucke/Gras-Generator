@@ -5,6 +5,7 @@ import math
 random.seed(); 
 
 def run(origin):
+    bpy.ops.object.select_all(action='DESELECT')
     if not "grashalms" in bpy.data.groups:
         bpy.ops.group.create(name = "grashalms")
     grashalmNames = []
@@ -13,12 +14,20 @@ def run(origin):
         ob = createMesh('grashalm', origin, verts, [], faces)    
         ob.show_name = False
         grashalmNames.append(ob.name)
-        
+
     scene = bpy.context.scene
+
+    bpy.ops.object.empty_add(type = 'PLAIN_AXES', view_align = False, location = origin, layers = (True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False))
+    empty = scene.objects.active
+    empty.name = "grashalm.parent"
     for name in grashalmNames:   
         scene.objects.active = scene.objects[name] 
-        bpy.ops.object.group_link(group="grashalms")     
-        print(name)
+        bpy.ops.object.group_link(group="grashalms")   
+        scene.objects.active.select = True
+       
+    scene.objects.active = empty
+    bpy.ops.object.parent_set(type='OBJECT', keep_transform=True) 
+    bpy.ops.object.select_all(action='DESELECT')
     return
  
 def createMesh(name, origin, verts, edges, faces):
